@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.android.quakereport;
+package com.example.android.newsreport;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -38,45 +37,45 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
 import android.widget.TextView;
 
-public class EarthquakeActivity extends AppCompatActivity implements LoaderCallbacks<List<Earthquake>> {
+public class NewsAppActivity extends AppCompatActivity implements LoaderCallbacks<List<News>> {
 
-    public static final String LOG_TAG = EarthquakeActivity.class.getName();
-    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=5&limit=10";
-    private EarthquakeAdapter mAdapter;
-    private static final int EARTHQUAKE_LOADER_ID = 1;
+    public static final String LOG_TAG = NewsAppActivity.class.getName();
+    private static final String USGS_REQUEST_URL = "https://content.guardianapis.com/search?show-fields=thumbnail&api-key=test";
+    private NewsAdapter mAdapter;
+    private static final int NEWS_LOADER_ID = 1;
     private TextView mEmptyStateTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.earthquake_activity);
+        setContentView(R.layout.news_activity);
 
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        ListView newsListView = (ListView) findViewById(R.id.list);
 
-        // Create a new adapter that takes an empty list of earthquakes as input
-        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
+        // Create a new adapter that takes an empty list of news as input
+        mAdapter = new NewsAdapter(this, new ArrayList<News>());
 
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-        earthquakeListView.setEmptyView(mEmptyStateTextView);
+        newsListView.setEmptyView(mEmptyStateTextView);
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(mAdapter);
+        newsListView.setAdapter(mAdapter);
 
         // Set an item click listener on the ListView, which sends an intent to a web browser
-        // to open a website with more information about the selected earthquake.
-        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // to open a website with more information about the selected news.
+        newsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // Find the current earthquake that was clicked on
-                Earthquake currentEarthquake = mAdapter.getItem(position);
+                // Find the current news that was clicked on
+                News currentNews = mAdapter.getItem(position);
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
-                Uri earthquakeUri = Uri.parse(currentEarthquake.getUrl());
+                Uri newsUri = Uri.parse(currentNews.getUrl());
 
-                // Create a new intent to view the earthquake URI
-                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
+                // Create a new intent to view the news URI
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
 
                 // Send the intent to launch a new activity
                 startActivity(websiteIntent);
@@ -102,7 +101,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
+            loaderManager.initLoader(NEWS_LOADER_ID, null, this);
         } else {
             // Otherwise, display error
             // First, hide loading indicator so error message will be visible
@@ -120,32 +119,32 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
 
     @Override
-    public void onLoaderReset(Loader<List<Earthquake>> loader) {
+    public void onLoaderReset(Loader<List<News>> loader) {
         // Loader reset, so we can clear out our existing data.
         mAdapter.clear();
     }
 
     @Override
-    public Loader<List<Earthquake>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
         // Create a new loader for the given URL
-        return new EarthquakeLoader(this, USGS_REQUEST_URL);
+        return new NewsLoader(this, USGS_REQUEST_URL);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
-        // Clear the adapter of previous earthquake data
+    public void onLoadFinished(Loader<List<News>> loader, List<News> news) {
+        // Clear the adapter of previous news data
 
         View loadingIndicator = findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
 
-        mEmptyStateTextView.setText(R.string.no_earthquakes);
+        mEmptyStateTextView.setText(R.string.no_news);
 
         mAdapter.clear();
 
-        // If there is a valid list of {@link Earthquake}s, then add them to the adapter's
+        // If there is a valid list of {@link new}s, then add them to the adapter's
         // data set. This will trigger the ListView to update.
-        if (earthquakes != null && !earthquakes.isEmpty()) {
-            mAdapter.addAll(earthquakes);
+        if (news != null && !news.isEmpty()) {
+            mAdapter.addAll(news);
         }
     }
 
