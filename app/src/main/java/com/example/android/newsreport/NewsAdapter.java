@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 
+import org.w3c.dom.Text;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +39,12 @@ public class NewsAdapter extends ArrayAdapter<News> {
         News currentSection = (News) getItem(position);
 
         TextView titleTextView = (TextView) listItemView.findViewById(R.id.primary_title);
+
+        TextView authorNameTextView = (TextView) listItemView.findViewById((R.id.author));
+        authorNameTextView.setText(currentSection.getAuthorName());
+
+        TextView sectionNameTextView = (TextView) listItemView.findViewById(R.id.section_name_tv);
+        sectionNameTextView.setText(currentSection.getSectionName());
 
         titleTextView.setText(currentSection.getTitle());
 

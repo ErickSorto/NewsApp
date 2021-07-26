@@ -40,7 +40,7 @@ import android.widget.TextView;
 public class NewsAppActivity extends AppCompatActivity implements LoaderCallbacks<List<News>> {
 
     public static final String LOG_TAG = NewsAppActivity.class.getName();
-    private static final String USGS_REQUEST_URL = "https://content.guardianapis.com/search?show-fields=thumbnail&api-key=test";
+    private static String USGS_REQUEST_URL = null;
     private NewsAdapter mAdapter;
     private static final int NEWS_LOADER_ID = 1;
     private TextView mEmptyStateTextView;
@@ -75,16 +75,18 @@ public class NewsAppActivity extends AppCompatActivity implements LoaderCallback
                 Uri newsUri = Uri.parse(currentNews.getUrl());
 
                 // Create a new intent to view the news URI
+
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
 
+                if (websiteIntent.resolveActivity(getPackageManager()) != null) {
+
+                    // Send the intent to launch a new activity
+                    startActivity(websiteIntent);
+                }
                 // Send the intent to launch a new activity
                 startActivity(websiteIntent);
             }
         });
-
-
-
-
 
         // Get a reference to the ConnectivityManager to check state of network connectivity
         ConnectivityManager connMgr = (ConnectivityManager)
@@ -113,11 +115,6 @@ public class NewsAppActivity extends AppCompatActivity implements LoaderCallback
         }
     }
 
-
-
-
-
-
     @Override
     public void onLoaderReset(Loader<List<News>> loader) {
         // Loader reset, so we can clear out our existing data.
@@ -127,6 +124,7 @@ public class NewsAppActivity extends AppCompatActivity implements LoaderCallback
     @Override
     public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
         // Create a new loader for the given URL
+        USGS_REQUEST_URL = uriBuilder();
         return new NewsLoader(this, USGS_REQUEST_URL);
     }
 
@@ -148,8 +146,22 @@ public class NewsAppActivity extends AppCompatActivity implements LoaderCallback
         }
     }
 
+    public String uriBuilder(){ //URI BUILDER
+        // URI BUILDER
 
+        String host = System.getProperty("host", "localhost");
+        String port = System.getProperty("port", "8080");
 
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("https")
+                .authority("content.guardianapis.com")
+                .appendPath("search")
+                .appendQueryParameter("show-fields", "thumbnail")
+                .appendQueryParameter("show-tags", "contributor")
+                .appendQueryParameter("api-key", "test")
+                .fragment("section-name");
+        String myUrl = builder.build().toString();
+
+        return myUrl;
+    }
 }
-
-

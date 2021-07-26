@@ -65,7 +65,11 @@ public final class QueryUtils {
                 JSONObject currentNews = newsArray.getJSONObject(i);
 
                 JSONObject fields = currentNews.getJSONObject("fields");
+                JSONArray tags = currentNews.getJSONArray("tags");
+                JSONObject firstTAG = tags.getJSONObject(0);
 
+                String authorNAME = firstTAG.getString("firstName") + " " + firstTAG.getString("lastName");
+                String sectionName = currentNews.getString("sectionName");
                 // Extract the url String for image
                 String imageURL = fields.getString("thumbnail");
 
@@ -79,7 +83,7 @@ public final class QueryUtils {
                 String url = currentNews.getString("webUrl");
 
                 // and url from the JSON response.
-                News newSection = new News(imageURL, title, date, url);
+                News newSection = new News(imageURL, title, date, authorNAME, sectionName, url);
 
                 news.add(newSection);
             }
