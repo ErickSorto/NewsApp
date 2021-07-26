@@ -10,17 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
 
 import com.bumptech.glide.Glide;
-
-import org.w3c.dom.Text;
-
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class NewsAdapter extends ArrayAdapter<News> {
     private String dateSeparator = "T";
@@ -57,11 +49,8 @@ public class NewsAdapter extends ArrayAdapter<News> {
             String[] parts = currentSection.getDate().split(dateSeparator);
             date = parts[0];
         }
-
-        // Display the date of the current news in that TextView
         dateView.setText(date);
 
         return listItemView;
-
     }
 }
